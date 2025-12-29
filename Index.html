@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blinky - Minecraft Loader</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #1E1E1E;
+    }
+    .window {
+      background-color: #232323;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      opacity: 0; /* Hidden before animation */
+      transform: scale(0.9) translateY(40px);
+    }
+    .btn-primary {
+      background-color: #282828;
+      border: 2px solid #4682B4;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(70, 130, 180, 0.3);
+    }
+    .content-box {
+      background-color: #323232;
+      border-radius: 10px;
+    }
+    .status-indicator {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    /* Responsive iframe wrapper */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #000;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <div class="window w-full max-w-4xl overflow-hidden">
+    <!-- Title Bar -->
+    <div class="bg-[#232323] px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <i data-feather="box" class="text-[#4682B4]"></i>
+        <h1 class="text-xl font-bold text-white">Blinky Loader</h1>
+      </div>
+      <div class="flex space-x-3">
+        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="p-6 content-box">
+      <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex-1">
+          <h2 class="text-2xl font-bold text-white mb-2">Vanish and strike with Blinky.</h2>
+          <p class="text-gray-300 mb-6">
+            Wipe your enemies with ease using Blinky. The mod that lets you vanish and reappear on your own terms. 
+            Harness the power of blink lag to throw off opponents and control the fight like never before.
+          </p>
+          
+          <div class="flex items-center mb-6">
+            <div class="status-indicator w-3 h-3 rounded-full bg-[#32CD32] mr-2"></div>
+            <span class="text-[#32CD32] font-medium">Loader Status: Working</span>
+          </div>
+
+          <button class="btn-primary px-6 py-3 rounded-lg text-white font-semibold flex items-center justify-center w-full md:w-auto">
+            <i data-feather="download" class="mr-2"></i>
+            Download Blinky
+          </button>
+        </div>
+
+        <!-- YouTube Video Embed -->
+        <div class="flex-1 flex items-center justify-center">
+          <div class="video-container w-full">
+            <iframe 
+              src="https://www.youtube.com/embed/e0PF2SZ0SC0"
+              title="YouTube video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="bg-[#232323] px-6 py-3 text-center">
+      <p class="text-[#969696] text-sm">© 2025 Blinky Loader | Not affiliated with Mojang or Microsoft</p>
+    </div>
+  </div>
+
+  <script>
+    feather.replace();
+
+    // Opening animation for the whole window
+    window.addEventListener("load", () => {
+      anime({
+        targets: ".window",
+        opacity: [0, 1],
+        scale: [0.9, 1],
+        translateY: [40, 0],
+        easing: "easeOutExpo",
+        duration: 1200
+      });
+    });
+
+    // Hover animation on download button
+    const btn = document.querySelector('.btn-primary');
+    btn.addEventListener('mouseenter', function() {
+      anime({
+        targets: this,
+        scale: 1.05,
+        duration: 200,
+        easing: "easeOutQuad"
+      });
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+      anime({
+        targets: this,
+        scale: 1,
+        duration: 200,
+        easing: "easeOutQuad"
+      });
+    });
+  </script>
+</body>
+</html>
