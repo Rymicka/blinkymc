@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blinky- GUI Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* ── Window shell ── */
+  .window {
+    width: 400px;
+    height: 250px;
+    background: #1e1e1e;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+    user-select: none;
+  }
+
+  /* ═══════════════════════════════════
+     SPLASH SCREEN
+  ═══════════════════════════════════ */
+  #splash {
+    position: absolute;
+    inset: 0;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 42px;
+    z-index: 10;
+  }
+
+  .splash-logo {
+    font-size: 46px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -1px;
+    opacity: 0;
+    transform: translateY(28px);
+    animation: logoIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+  }
+
+  .splash-tagline {
+    font-size: 12px;
+    color: #969696;
+    margin-top: 2px;
+    opacity: 0;
+    animation: fadeInSimple 0.5s ease 0.55s forwards;
+  }
+
+  @keyframes logoIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInSimple {
+    to { opacity: 1; }
+  }
+
+  /* Loading bar */
+  .bar-wrap {
+    margin-top: 28px;
+    width: 200px;
+    opacity: 0;
+    animation: fadeInSimple 0.4s ease 0.6s forwards;
+  }
+  .bar-track {
+    width: 200px;
+    height: 3px;
+    background: #373737;
+    border-radius: 2px;
+    overflow: visible;
+    position: relative;
+  }
+  .bar-fill {
+    height: 3px;
+    width: 0%;
+    background: #4682b4;
+    border-radius: 2px;
+    animation: barFill 1s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+    position: relative;
+  }
+  .bar-pct {
+    position: absolute;
+    right: -38px;
+    top: -4px;
+    font-size: 11px;
+    color: #969696;
+    white-space: nowrap;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  @keyframes barFill {
+    to { width: 100%; }
+  }
+
+  /* Init lines */
+  .init-lines {
+    margin-top: 10px;
+    width: 240px;
+    align-self: flex-start;
+    margin-left: 80px;
+  }
+  .init-line {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 14px;
+    color: #969696;
+    opacity: 0;
+  }
+  .init-line.green { color: #32cd32; }
+  .init-line:nth-child(1) { animation: fadeInSimple 0.3s ease 1.4s forwards; }
+  .init-line:nth-child(2) { animation: fadeInSimple 0.3s ease 1.6s forwards; }
+  .init-line:nth-child(3) { animation: fadeInSimple 0.3s ease 1.8s forwards; }
+  .init-line:nth-child(4) { animation: fadeInSimple 0.3s ease 2.0s forwards; }
+
+  /* Splash fade-out */
+  #splash.fade-out {
+    animation: splashOut 0.6s ease forwards;
+  }
+  @keyframes splashOut {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  /* ═══════════════════════════════════
+     MAIN UI
+  ═══════════════════════════════════ */
+  #main-ui {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease 0.2s;
+  }
+  #main-ui.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Title bar */
+  .titlebar {
+    height: 35px;
+    background: #232323;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 10px;
+    cursor: grab;
+  }
+  .titlebar-name {
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 400;
+  }
+  .close-btn {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+  .close-btn:hover { opacity: 1; }
+  .close-btn::before, .close-btn::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background: #ffffff;
+    top: 50%; left: 50%;
+    transform-origin: center;
+  }
+  .close-btn::before { transform: translate(-50%, -50%) rotate(45deg); }
+  .close-btn::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+  /* Content area */
+  .content {
+    height: calc(250px - 35px);
+    position: relative;
+  }
+
+  /* Big logo */
+  .main-logo {
+    position: absolute;
+    top: 10px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 48px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: -1px;
+  }
+
+  /* Status */
+  .status-label {
+    position: absolute;
+    top: 75px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 16px;
+    color: #ffffff;
+  }
+  .status-value {
+    position: absolute;
+    top: 95px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 16px;
+    color: #32cd32;
+    font-weight: 400;
+  }
+
+  /* Inject button */
+  .inject-btn {
+    position: absolute;
+    left: 125px;
+    top: 125px;
+    width: 150px;
+    height: 40px;
+    background: #323232;
+    border: 1px solid #4682b4;
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .inject-btn:hover {
+    background: #3d5a78;
+    border-color: #82b9e6;
+    border-width: 2px;
+  }
+  .inject-btn:active {
+    background: #2a4a65;
+  }
+  .inject-btn.injected {
+    background: #1e5a1e;
+    border-color: #28a028;
+    color: #32cd32;
+  }
+  .inject-btn.injected:hover {
+    background: #1e6e1e;
+    border-color: #3cd23c;
+    border-width: 2px;
+  }
+
+  /* Ripple */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(180, 210, 255, 0.25);
+    transform: scale(0);
+    animation: rippleAnim 0.55s ease-out forwards;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* Version */
+  .mc-version {
+    position: absolute;
+    bottom: 5px;
+    left: 0; right: 0;
+    text-align: center;
+    font-size: 14px;
+    color: #ffffff;
+  }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    font-size: 12px;
+    color: #969696;
+  }
+</style>
+</head>
+<body>
+
+<div class="window" id="window">
+
+  <!-- ── SPLASH ── -->
+  <div id="splash">
+    <div class="splash-logo">Blinky</div>
+    <div class="splash-tagline">Stay Hidden. Stay Dominant.</div>
+
+    <div class="bar-wrap">
+      <div class="bar-track">
+        <div class="bar-fill">
+          <span class="bar-pct" id="barPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="init-lines">
+      <div class="init-line">&gt; Getting updates...</div>
+      <div class="init-line">&gt; Loading Blinky...</div>
+      <div class="init-line">&gt; Logging in...</div>
+      <div class="init-line green">&gt; Ready.</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN UI ── -->
+  <div id="main-ui">
+
+    <div class="titlebar" id="titlebar">
+      <span class="titlebar-name">Blinky</span>
+      <div class="close-btn" id="closeBtn"></div>
+    </div>
+
+    <div class="content">
+      <div class="main-logo">Blinky</div>
+
+      <div class="status-label">Status:</div>
+      <div class="status-value">Working</div>
+
+      <button class="inject-btn" id="injectBtn">Inject</button>
+
+      <div class="mc-version">Minecraft: 1.8.9</div>
+      <div class="footer">Powered by Rymicka</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── Loading bar % counter ──────────────────────────────────────────────
+  const pctEl = document.getElementById('barPct');
+  // Bar animation: 1s starting at 0.65s → ends at 1.65s
+  const barStart = 650, barDuration = 1000;
+  function updatePct() {
+    const now = Date.now();
+    const elapsed = now - (startTime + barStart);
+    const t = Math.max(0, Math.min(1, elapsed / barDuration));
+    // Ease-out cubic
+    const et = 1 - Math.pow(1 - t, 3);
+    pctEl.textContent = Math.round(et * 100) + '%';
+    if (t < 1) requestAnimationFrame(updatePct);
+  }
+  const startTime = Date.now();
+  setTimeout(updatePct, barStart);
+
+  // ── Splash → Main UI transition ────────────────────────────────────────
+  // Last init line appears at ~2.0s, hold briefly, then transition at ~2.8s
+  const splash = document.getElementById('splash');
+  const mainUI = document.getElementById('main-ui');
+
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    mainUI.classList.add('visible');
+  }, 2800);
+
+  // ── Close button ───────────────────────────────────────────────────────
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    document.getElementById('window').style.animation = 'splashOut 0.3s ease forwards';
+  });
+
+  // ── Titlebar drag (cosmetic) ───────────────────────────────────────────
+  const win = document.getElementById('window');
+  const tb  = document.getElementById('titlebar');
+  let dragging = false, ox = 0, oy = 0, wx = 0, wy = 0;
+
+  tb.addEventListener('mousedown', e => {
+    dragging = true;
+    const r = win.getBoundingClientRect();
+    ox = e.clientX - r.left;
+    oy = e.clientY - r.top;
+    wx = r.left; wy = r.top;
+    win.style.position = 'fixed';
+    win.style.left = wx + 'px';
+    win.style.top  = wy + 'px';
+    win.style.margin = '0';
+    document.body.style.cursor = 'grabbing';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    win.style.left = (e.clientX - ox) + 'px';
+    win.style.top  = (e.clientY - oy) + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    dragging = false;
+    document.body.style.cursor = '';
+  });
+
+  // ── Inject button ──────────────────────────────────────────────────────
+  const injectBtn = document.getElementById('injectBtn');
+  let injected = false;
+
+  injectBtn.addEventListener('click', function(e) {
+    // Ripple
+    const rect = injectBtn.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width  = size + 'px';
+    ripple.style.height = size + 'px';
+    ripple.style.left   = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top    = (e.clientY - rect.top  - size / 2) + 'px';
+    injectBtn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+
+    if (injected) return;
+
+    // Simulate injection
+    injected = true;
+    injectBtn.classList.add('injected');
+    injectBtn.textContent = 'Injected ✓';
+
+    // Show a little popup
+    showPopup('Blinky injected successfully!');
+  });
+
+  function showPopup(msg) {
+    // Overlay
+    const overlay = document.createElement('div');
+    Object.assign(overlay.style, {
+      position: 'fixed', inset: '0',
+      zIndex: '999',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    });
+
+    // Mini window
+    const popup = document.createElement('div');
+    Object.assign(popup.style, {
+      width: '280px',
+      background: '#1e1e1e',
+      borderRadius: '6px',
+      overflow: 'hidden',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06)',
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      animation: 'popIn 0.18s cubic-bezier(0.16,1,0.3,1) forwards',
+    });
+
+    popup.innerHTML = `
+      <style>
+        @keyframes popIn {
+          from { opacity:0; transform:scale(0.92); }
+          to   { opacity:1; transform:scale(1); }
+        }
+      </style>
+      <div style="
+        height:32px; background:#232323;
+        display:flex; align-items:center; padding:0 12px;
+        font-size:14px; color:#fff; font-weight:400;
+      ">Blinky</div>
+      <div style="padding:20px 16px 16px; text-align:center;">
+        <div style="
+          width:38px; height:38px; border-radius:50%;
+          background:rgba(50,205,50,0.12); border:1.5px solid #32cd32;
+          display:flex; align-items:center; justify-content:center;
+          margin:0 auto 12px; font-size:18px; color:#32cd32;
+        ">✓</div>
+        <div style="font-size:13px; color:#e0e0e0; line-height:1.5;">${msg}</div>
+        <button id="popupOK" style="
+          margin-top:16px;
+          width:80px; height:28px;
+          background:#4682b4; border:none; border-radius:6px;
+          color:#fff; font-size:13px; font-family:inherit;
+          cursor:pointer; transition:background 0.15s;
+        "
+        onmouseover="this.style.background='#5a9fd4'"
+        onmouseout="this.style.background='#4682b4'"
+        >OK</button>
+      </div>
+    `;
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+    document.getElementById('popupOK').addEventListener('click', () => overlay.remove());
+  }
+</script>
+</body>
+</html>
