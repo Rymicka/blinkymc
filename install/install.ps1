@@ -2,6 +2,11 @@
 #  Blinky Loader Installer - Enhanced Edition
 # ============================================================
 
+# --- Fix console encoding ---
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001 > $null
+
 $Host.UI.RawUI.WindowTitle = "Blinky Loader Installer"
 
 function Write-Color {
@@ -160,4 +165,3 @@ catch {
 }
 
 Write-Color ""
-pause
