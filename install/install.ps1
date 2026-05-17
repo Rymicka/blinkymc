@@ -114,7 +114,7 @@ try {
 
     # ─── Download ──────────────────────────────────────────
     Write-Color ""
-    Show-Spinner -Message "Downloading loader" -Seconds 2
+    Show-Spinner -Message "Downloading loader (This can take up to 30 seconds.)" -Seconds 15
 
     Invoke-WebRequest `
         -Uri "https://blinky-backend.onrender.com/download" `
