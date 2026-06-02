@@ -323,21 +323,26 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="bg-[#232323] px-6 py-3 flex items-center justify-between">
-      <p class="text-[#969696] text-sm" title="Blinky is a third-party Minecraft modification and is not affiliated with, endorsed by, or supported by Mojang Studios or Microsoft. Use at your own risk.">
-        © 2026 Blinky Loader | Not affiliated with Mojang or Microsoft
-      </p>
+<!-- Footer -->
+<div class="bg-[#232323] px-6 py-3 flex items-center justify-between">
+  <p class="text-[#969696] text-sm" title="Blinky is a third-party Minecraft modification and is not affiliated with, endorsed by, or supported by Mojang Studios or Microsoft. Use at your own risk.">
+    © 2026 Blinky Loader | Not affiliated with Mojang or Microsoft
+  </p>
 
-      <button id="accountBtn" onclick="openModal()" class="account-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-300 text-sm font-medium">
-        <span id="accountAvatar">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-        </span>
-        <span id="accountLabel">Account</span>
-      </button>
-    </div>
+  <div class="flex items-center gap-2">
+    <a href="/privacy" class="account-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-400 text-sm font-medium">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Privacy
+    </a>
 
+    <button id="accountBtn" onclick="openModal()" class="account-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-gray-300 text-sm font-medium">
+      <span id="accountAvatar">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </span>
+      <span id="accountLabel">Account</span>
+    </button>
   </div>
+</div>
 
   <!-- AUTH MODAL -->
   <div id="modalOverlay" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4" onclick="handleOverlayClick(event)">
